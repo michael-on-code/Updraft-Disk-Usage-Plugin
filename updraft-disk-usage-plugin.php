@@ -44,6 +44,10 @@ define( 'UPDRAFT_DISK_USAGE_PLUGIN_VERSION', '1.0.0' );
 function activate_updraft_disk_usage_plugin() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-updraft-disk-usage-plugin-activator.php';
 	Updraft_Disk_Usage_Plugin_Activator::activate();
+
+    require_once plugin_dir_path(__FILE__).'includes/DBHandler.php';
+    $dbHandler = new DBHandler();
+    $dbHandler->createTable();
 }
 
 /**

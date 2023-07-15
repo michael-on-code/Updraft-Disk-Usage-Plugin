@@ -29,6 +29,8 @@
  */
 class Updraft_Disk_Usage_Plugin {
 
+    protected $plugin_title;
+
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
 	 * the plugin.
@@ -73,6 +75,7 @@ class Updraft_Disk_Usage_Plugin {
 			$this->version = '1.0.0';
 		}
 		$this->plugin_name = 'updraft-disk-usage-plugin';
+		$this->plugin_title = __('Disk Usage', $this->plugin_name);
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -120,7 +123,7 @@ class Updraft_Disk_Usage_Plugin {
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-updraft-disk-usage-plugin-public.php';
+		//require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-updraft-disk-usage-plugin-public.php';
 
 		$this->loader = new Updraft_Disk_Usage_Plugin_Loader();
 
@@ -157,7 +160,19 @@ class Updraft_Disk_Usage_Plugin {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+
+        require_once plugin_dir_path( __FILE__ ) . 'DiskUsage.php';
+        $diskUsager = new DiskUsage();
+        $this->loader->add_action( 'admin_menu', $diskUsager, 'addPluginAdminMenus' );
+        $this->loader->add_action( 'wp_ajax_gather_disk_usage', $diskUsager, 'gatherResultFromAjax' );
+        $this->loader->add_action( 'wp_ajax_nopriv_gather_disk_usage', $diskUsager, 'mustAuthenticate' );
+
+
 	}
+
+
+
+
 
 	/**
 	 * Register all of the hooks related to the public-facing functionality
@@ -168,10 +183,10 @@ class Updraft_Disk_Usage_Plugin {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Updraft_Disk_Usage_Plugin_Public( $this->get_plugin_name(), $this->get_version() );
+		/*$plugin_public = new Updraft_Disk_Usage_Plugin_Public( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );*/
 
 	}
 
